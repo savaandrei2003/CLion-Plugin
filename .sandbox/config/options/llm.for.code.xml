@@ -1,7 +1,0 @@
-<application>
-  <component name="LLMSettings">
-    <option name="file_commit_generate_summary" value="true" />
-    <option name="selection_commit_summary_enabled" value="true" />
-    <option name="update_commit_generate_summary" value="true" />
-  </component>
-</application>
