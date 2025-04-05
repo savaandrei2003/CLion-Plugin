@@ -18,10 +18,12 @@ import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBFont
 import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.cidr.lang.psi.OCFunctionDeclaration
+import org.json.JSONArray
 import org.json.JSONObject
 import java.awt.Font
 import java.io.DataOutputStream
 import java.io.File
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.swing.JLabel
@@ -40,8 +42,10 @@ class CountCppFunctionsAction : AnAction() {
         }
 
         val projectPath = project.basePath ?: return
-        val outputFile = File(projectPath, "main.txt")
+        val outputFile = File(projectPath, "client.cpp")
         outputFile.writeText(psiFile.text)
+
+        val response = sendFileToApi(outputFile)
 
         val serverResponse = getRequestTestConnection()
         if (serverResponse.isEmpty()) {
@@ -54,20 +58,22 @@ class CountCppFunctionsAction : AnAction() {
             return
         }
 
-        val jsonValue = try {
-            JSONObject(serverResponse).getString("value")
+        val jsonArray: JSONArray
+        try {
+            val jsonObject = JSONObject(serverResponse)
+            jsonArray = jsonObject.getJSONArray("value")
         } catch (e: Exception) {
-            "/* Nu s-a putut extrage textul din JSON. */"
+            Messages.showErrorDialog(project, "Eroare la parsarea JSON-ului: ${e.message}", "JSON Parsing Error")
+            return
         }
 
-       // addPerformanceMarkers(project, psiFile, functions, jsonValue)
-        addInlayHints(editor, functions, jsonValue)
+        addInlayHints(editor, functions, jsonArray)
     }
 
     private fun sendFileToApi(file: File): String {
         val boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW"
         val lineEnd = "\r\n"
-        val url = URL("http://localhost:8080/analyze")
+        val url = URL("http://172.20.10.2:5000/run_source_file")
 
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "POST"
@@ -76,24 +82,30 @@ class CountCppFunctionsAction : AnAction() {
         connection.doOutput = true
         connection.useCaches = false
 
-        val outputStream = DataOutputStream(connection.outputStream)
-        outputStream.writeBytes("--$boundary$lineEnd")
-        outputStream.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"${file.name}\"$lineEnd")
-        outputStream.writeBytes("Content-Type: text/plain$lineEnd$lineEnd")
+        DataOutputStream(connection.outputStream).use { outputStream ->
+            outputStream.writeBytes("--$boundary$lineEnd")
+            outputStream.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"${file.name}\"$lineEnd")
+            outputStream.writeBytes("Content-Type: text/plain$lineEnd$lineEnd")
+            file.inputStream().use { it.copyTo(outputStream) }
+            outputStream.writeBytes(lineEnd)
+            outputStream.writeBytes("--$boundary--$lineEnd")
+        }
 
-        file.inputStream().copyTo(outputStream)
-        outputStream.writeBytes(lineEnd)
-        outputStream.writeBytes("--$boundary--$lineEnd")
-        outputStream.flush()
-        outputStream.close()
+        val responseCode = connection.responseCode
+        val responseText = connection.inputStream.bufferedReader().use { it.readText() }
 
-        val response = connection.inputStream.bufferedReader().readText()
         connection.disconnect()
-        return response
+
+        if (responseCode != 200) {
+            throw IOException("Eroare la server: $responseCode")
+        }
+
+        return responseText
     }
 
     private fun getRequestTestConnection(): String {
-        val url = URL("https://api.chucknorris.io/jokes/random")
+//        val url = URL("https://api.chucknorris.io/jokes/random")
+        val url = URL("http://172.20.10.2:5000/run_source_file")
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "GET"
         connection.connect()
@@ -104,20 +116,6 @@ class CountCppFunctionsAction : AnAction() {
     }
 }
 
-private fun addFunctionMarkers(project: Project, psiFile: PsiFile, functions: Collection<OCFunctionDeclaration>) {
-    WriteCommandAction.runWriteCommandAction(project) {
-        functions.forEachIndexed { index, func ->
-            val commentText = "// Aceasta este functia nr. ${index + 1}\n"
-            val dummyFile = PsiFileFactory.getInstance(project).createFileFromText(
-                "dummy.cpp",
-                OCLanguage.getInstance(),
-                commentText
-            )
-            val comment = dummyFile.firstChild as? PsiComment ?: return@forEachIndexed
-            psiFile.addBefore(comment, func)
-        }
-    }
-}
 
 private fun addPerformanceMarkers(project: Project, psiFile: PsiFile, functions: Collection<OCFunctionDeclaration>, jsonValue: String) {
     WriteCommandAction.runWriteCommandAction(project) {
@@ -134,11 +132,20 @@ private fun addPerformanceMarkers(project: Project, psiFile: PsiFile, functions:
     }
 }
 
-private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclaration>, jsonValue: String) {
+private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclaration>, jsonArray: JSONArray) {
     val inlayModel = editor.inlayModel
     val document = editor.document
 
+
+
+    if (jsonArray.length() != functions.size) return
+
     functions.forEachIndexed { index, func ->
+        val jsonObject = jsonArray.getJSONObject(index)
+        val cpuTime = jsonObject.optString("cpu_time", "N/A")
+        val register = jsonObject.optString("start_address", "N/A")
+        val hintText = "⏱ Functia ${index + 1}: CPU Time: $cpuTime | Register: $register"
+
         val line = document.getLineNumber(func.textOffset)
         val offset = document.getLineStartOffset(line)
 
@@ -147,7 +154,7 @@ private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclar
             true,  // relatesToPrecedingText
             true,  // showAbove
             0,     // priority
-            ExecutionTimeRenderer("⏱ Functia ${index + 1}: $jsonValue")
+            ExecutionTimeRenderer(hintText)
         )
     }
 }
