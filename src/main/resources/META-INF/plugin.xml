@@ -31,6 +31,13 @@
                 description="Counts all C++ functions in the current file.">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
+
+        <action id="CyclomaticComplexityAction"
+                class="com.example.clionplugin.CyclomaticComplexityAction"
+                text="Show Cyclomatic Complexity"
+                description="Calculates the cyclomatic complexity of the current C++ function.">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
     </actions>
 
     <!-- Product and plugin compatibility requirements.
