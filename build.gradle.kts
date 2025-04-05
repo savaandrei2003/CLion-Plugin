@@ -30,6 +30,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.25")
+    implementation("org.json:json:20240303")
 }
 
 tasks {
