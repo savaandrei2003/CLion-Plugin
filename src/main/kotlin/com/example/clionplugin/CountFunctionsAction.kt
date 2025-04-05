@@ -150,11 +150,19 @@ private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclar
     val inlayModel = editor.inlayModel
     val document = editor.document
 
-
-
-    // if (jsonArray.length() != functions.size) return
+    // Verificare lungime array
+//    if (jsonArray.length() != functions.size) {
+//        Messages.showWarningDialog(
+//            editor.project,
+//            "Numărul de funcții (${functions.size}) nu corespunde cu dimensiunea array-ului JSON (${jsonArray.length()})",
+//            "Avertisment"
+//        )
+//    }
 
     functions.forEachIndexed { index, func ->
+        // Dacă nu există obiect JSON la indexul respectiv, ieșim
+        if (index >= jsonArray.length()) return@forEachIndexed
+
         val jsonObject = jsonArray.getJSONObject(index)
         val cpuTime = jsonObject.optString("cpu_time", "N/A")
         val register = jsonObject.optString("start_address", "N/A")
@@ -165,9 +173,9 @@ private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclar
 
         inlayModel.addBlockElement(
             offset,
-            true,  // relatesToPrecedingText
-            true,  // showAbove
-            0,     // priority
+            true,
+            true,
+            0,
             ExecutionTimeRenderer(hintText)
         )
     }
