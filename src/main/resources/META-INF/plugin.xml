@@ -32,12 +32,6 @@
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
 
-        <action id="CyclomaticComplexityAction"
-                class="com.example.clionplugin.CyclomaticComplexityAction"
-                text="Show Cyclomatic Complexity"
-                description="Calculates the cyclomatic complexity of the current C++ function.">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
-        </action>
     </actions>
 
     <!-- Product and plugin compatibility requirements.
@@ -48,6 +42,11 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="Execution Details"
+                    anchor="right"
+                    factoryClass="com.example.clionplugin.ExecutionInfoToolWindowFactory">
+        </toolWindow>
+
 
     </extensions>
 </idea-plugin>

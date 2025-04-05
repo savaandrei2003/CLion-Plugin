@@ -81,7 +81,7 @@ class CountCppFunctionsAction : AnAction() {
             return
         }
 
-        addInlayHints(editor, functions, jsonArray)
+        addInlayHints(editor, functions, jsonArray, project)
     }
 
     private fun sendFileToApi(file: File): String {
@@ -118,7 +118,6 @@ class CountCppFunctionsAction : AnAction() {
     }
 
     private fun getRequestTestConnection(): String {
-//        val url = URL("https://api.chucknorris.io/jokes/random")
         val url = URL("http://172.20.10.2:5000/run_source_file")
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "GET"
@@ -129,7 +128,6 @@ class CountCppFunctionsAction : AnAction() {
         return response
     }
 }
-
 
 private fun addPerformanceMarkers(project: Project, psiFile: PsiFile, functions: Collection<OCFunctionDeclaration>, jsonValue: String) {
     WriteCommandAction.runWriteCommandAction(project) {
@@ -146,38 +144,32 @@ private fun addPerformanceMarkers(project: Project, psiFile: PsiFile, functions:
     }
 }
 
-private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclaration>, jsonArray: JSONArray) {
+private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclaration>, jsonArray: JSONArray, project: Project) {
     val inlayModel = editor.inlayModel
     val document = editor.document
 
-    // Verificare lungime array
-//    if (jsonArray.length() != functions.size) {
-//        Messages.showWarningDialog(
-//            editor.project,
-//            "Numărul de funcții (${functions.size}) nu corespunde cu dimensiunea array-ului JSON (${jsonArray.length()})",
-//            "Avertisment"
-//        )
-//    }
-
     functions.forEachIndexed { index, func ->
-        // Dacă nu există obiect JSON la indexul respectiv, ieșim
         if (index >= jsonArray.length()) return@forEachIndexed
 
         val jsonObject = jsonArray.getJSONObject(index)
         val cpuTime = jsonObject.optString("cpu_time", "N/A")
         val register = jsonObject.optString("start_address", "N/A")
-        val hintText = "⏱ Functia ${index + 1}: CPU Time: $cpuTime | Register: $register"
+        val hintExtra = if (jsonObject.has("hint") && !jsonObject.isNull("hint")) {
+            val hintValue = jsonObject.getString("hint")
+            if (hintValue.isNotBlank()) " | Hint: $hintValue" else ""
+        } else ""
+
+        val hintText = "⏱ Functia ${index + 1}: CPU Time: $cpuTime | Register: $register$hintExtra"
 
         val line = document.getLineNumber(func.textOffset)
         val offset = document.getLineStartOffset(line)
 
         inlayModel.addBlockElement(
             offset,
-            true,
-            true,
-            0,
-            ExecutionTimeRenderer(hintText)
+            true,  // relatesToPrecedingText
+            true,  // showAbove
+            0,     // priority
+            ExecutionTimeRenderer(hintText, project)
         )
     }
 }
-
