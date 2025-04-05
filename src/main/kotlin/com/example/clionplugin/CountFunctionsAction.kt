@@ -14,6 +14,9 @@ import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 import org.json.JSONObject
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+
 
 class CountCppFunctionsAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -52,40 +55,16 @@ class CountCppFunctionsAction : AnAction() {
             "/* Nu s-a putut extrage textul din JSON. */"
         }
 
-//        WriteCommandAction.runWriteCommandAction(project) {
-//            functions.forEachIndexed { index, func ->
-//                val commentText = "// Aceasta este functia nr. ${index + 1}\n"
-//                val dummyFile = PsiFileFactory.getInstance(project).createFileFromText(
-//                    "dummy.cpp",
-//                    OCLanguage.getInstance(),
-//                    commentText
-//                )
-//                val comment = dummyFile.firstChild as? PsiComment ?: return@forEachIndexed
-//                psiFile.addBefore(comment, func)
-//            }
-//        }
+        addPerformanceMarkers(project, psiFile, functions, jsonValue)
 
-        WriteCommandAction.runWriteCommandAction(project) {
-            functions.forEachIndexed { index, func ->
-                val commentText = "// Functia ${index + 1}: $jsonValue\n"
-                val dummyFile = PsiFileFactory.getInstance(project).createFileFromText(
-                    "dummy.cpp",
-                    OCLanguage.getInstance(),
-                    commentText
-                )
-                val comment = dummyFile.firstChild as? PsiComment ?: return@forEachIndexed
-                psiFile.addBefore(comment, func)
-            }
-        }
-
-        Messages.showMessageDialog(
-            project,
-            "Am adaugat comentarii pentru ${functions.size} functie/functii.\n" +
-                    "Codul a fost salvat in: ${outputFile.absolutePath}\n\n" +
-                    "Raspuns server:\n$serverResponse",
-            "Succes!",
-            Messages.getInformationIcon()
-        )
+//        Messages.showMessageDialog(
+//            project,
+//            "Am adaugat comentarii pentru ${functions.size} functie/functii.\n" +
+//                    "Codul a fost salvat in: ${outputFile.absolutePath}\n\n" +
+//                    "Raspuns server:\n$serverResponse",
+//            "Succes!",
+//            Messages.getInformationIcon()
+//        )
     }
 
     private fun sendFileToApi(file: File): String {
@@ -127,3 +106,36 @@ class CountCppFunctionsAction : AnAction() {
         return response
     }
 }
+
+
+// -------------- prints functions -----------------
+private fun addFunctionMarkers(project: Project, psiFile: PsiFile, functions: Collection<OCFunctionDeclaration>) {
+    WriteCommandAction.runWriteCommandAction(project) {
+        functions.forEachIndexed { index, func ->
+            val commentText = "// Aceasta este functia nr. ${index + 1}\n"
+            val dummyFile = PsiFileFactory.getInstance(project).createFileFromText(
+                "dummy.cpp",
+                OCLanguage.getInstance(),
+                commentText
+            )
+            val comment = dummyFile.firstChild as? PsiComment ?: return@forEachIndexed
+            psiFile.addBefore(comment, func)
+        }
+    }
+}
+
+private fun addPerformanceMarkers(project: Project, psiFile: PsiFile, functions: Collection<OCFunctionDeclaration>, jsonValue: String) {
+    WriteCommandAction.runWriteCommandAction(project) {
+        functions.forEachIndexed { index, func ->
+            val commentText = "// Functia ${index + 1}: $jsonValue\n"
+            val dummyFile = PsiFileFactory.getInstance(project).createFileFromText(
+                "dummy.cpp",
+                OCLanguage.getInstance(),
+                commentText
+            )
+            val comment = dummyFile.firstChild as? PsiComment ?: return@forEachIndexed
+            psiFile.addBefore(comment, func)
+        }
+    }
+}
+
