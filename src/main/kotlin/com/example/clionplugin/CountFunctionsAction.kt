@@ -1,26 +1,35 @@
 package com.example.clionplugin
 
+import ExecutionTimeRenderer
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.InlayModel
+import com.intellij.openapi.editor.markup.TextAttributes
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.ui.JBColor
+import com.intellij.util.ui.JBFont
 import com.jetbrains.cidr.lang.OCLanguage
 import com.jetbrains.cidr.lang.psi.OCFunctionDeclaration
-import java.io.*
+import org.json.JSONObject
+import java.awt.Font
+import java.io.DataOutputStream
+import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
-import org.json.JSONObject
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
-
+import javax.swing.JLabel
 
 class CountCppFunctionsAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
+        val editor = e.getData(CommonDataKeys.EDITOR) ?: return
         val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
 
         val functions = PsiTreeUtil.collectElementsOfType(psiFile, OCFunctionDeclaration::class.java)
@@ -34,10 +43,6 @@ class CountCppFunctionsAction : AnAction() {
         val outputFile = File(projectPath, "main.txt")
         outputFile.writeText(psiFile.text)
 
-        // --- Send file to API ---
-        // val serverResponse = sendFileToApi(outputFile)
-
-        // --- Test connection ---
         val serverResponse = getRequestTestConnection()
         if (serverResponse.isEmpty()) {
             Messages.showMessageDialog(
@@ -55,22 +60,14 @@ class CountCppFunctionsAction : AnAction() {
             "/* Nu s-a putut extrage textul din JSON. */"
         }
 
-        addPerformanceMarkers(project, psiFile, functions, jsonValue)
-
-//        Messages.showMessageDialog(
-//            project,
-//            "Am adaugat comentarii pentru ${functions.size} functie/functii.\n" +
-//                    "Codul a fost salvat in: ${outputFile.absolutePath}\n\n" +
-//                    "Raspuns server:\n$serverResponse",
-//            "Succes!",
-//            Messages.getInformationIcon()
-//        )
+       // addPerformanceMarkers(project, psiFile, functions, jsonValue)
+        addInlayHints(editor, functions, jsonValue)
     }
 
     private fun sendFileToApi(file: File): String {
         val boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW"
         val lineEnd = "\r\n"
-        val url = URL("http://localhost:8080/analyze") // schimbă cu endpointul tău
+        val url = URL("http://localhost:8080/analyze")
 
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "POST"
@@ -96,7 +93,7 @@ class CountCppFunctionsAction : AnAction() {
     }
 
     private fun getRequestTestConnection(): String {
-        val url = URL("https://api.chucknorris.io/jokes/random") // schimbă cu endpointul tău
+        val url = URL("https://api.chucknorris.io/jokes/random")
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "GET"
         connection.connect()
@@ -107,8 +104,6 @@ class CountCppFunctionsAction : AnAction() {
     }
 }
 
-
-// -------------- prints functions -----------------
 private fun addFunctionMarkers(project: Project, psiFile: PsiFile, functions: Collection<OCFunctionDeclaration>) {
     WriteCommandAction.runWriteCommandAction(project) {
         functions.forEachIndexed { index, func ->
@@ -139,3 +134,20 @@ private fun addPerformanceMarkers(project: Project, psiFile: PsiFile, functions:
     }
 }
 
+private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclaration>, jsonValue: String) {
+    val inlayModel = editor.inlayModel
+    val document = editor.document
+
+    functions.forEachIndexed { index, func ->
+        val line = document.getLineNumber(func.textOffset)
+        val offset = document.getLineStartOffset(line)
+
+        inlayModel.addBlockElement(
+            offset,
+            true,  // relatesToPrecedingText
+            true,  // showAbove
+            0,     // priority
+            ExecutionTimeRenderer("⏱ Functia ${index + 1}: $jsonValue")
+        )
+    }
+}
