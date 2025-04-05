@@ -4,15 +4,15 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.ui.Messages
-import com.jetbrains.cidr.lang.psi.OCFile
+import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.cidr.lang.psi.OCFunctionDeclaration
-
 class CountCppFunctionsAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val psiFile = e.getData(CommonDataKeys.PSI_FILE) as? OCFile ?: return
+        val psiFile = e.getData(CommonDataKeys.PSI_FILE) ?: return
 
-        val functions = psiFile.children.filterIsInstance<OCFunctionDeclaration>()
+        // Căutăm toate funcțiile în orice fel de fișier, nu doar OCFile
+        val functions = PsiTreeUtil.collectElementsOfType(psiFile, OCFunctionDeclaration::class.java)
         val count = functions.size
 
         Messages.showMessageDialog(
