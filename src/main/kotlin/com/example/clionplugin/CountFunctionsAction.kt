@@ -10,6 +10,10 @@ import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
@@ -42,26 +46,36 @@ class CountCppFunctionsAction : AnAction() {
         }
 
         val projectPath = project.basePath ?: return
-        val outputFile = File(projectPath, "client.cpp")
+        val outputFile = File(projectPath, "main.cpp")
         outputFile.writeText(psiFile.text)
 
-        val response = sendFileToApi(outputFile)
+        ProgressManager.getInstance().run(object : Task.Modal(project, "Se trimite fișierul către server...", true) {
+            override fun run(indicator: ProgressIndicator) {
+                indicator.text = "Așteptăm răspunsul serverului..."
+                try {
+                    val response = sendFileToApi(outputFile)
 
-        val serverResponse = getRequestTestConnection()
-        if (serverResponse.isEmpty()) {
-            Messages.showMessageDialog(
-                project,
-                "Nu s-a putut conecta la server.",
-                "Eroare",
-                Messages.getErrorIcon()
-            )
-            return
-        }
+                    ApplicationManager.getApplication().invokeLater {
+                        handleServerResponse(response, editor, functions, project)
+                    }
+                } catch (ex: Exception) {
+                    ApplicationManager.getApplication().invokeLater {
+                        Messages.showErrorDialog(project, "Eroare: ${ex.message}", "Conexiune eșuată")
+                    }
+                }
+            }
+        })
+    }
 
-        val jsonArray: JSONArray
-        try {
-            val jsonObject = JSONObject(serverResponse)
-            jsonArray = jsonObject.getJSONArray("value")
+    private fun handleServerResponse(
+        response: String,
+        editor: Editor,
+        functions: Collection<OCFunctionDeclaration>,
+        project: Project
+    ) {
+        val jsonArray = try {
+            val jsonObject = JSONObject(response)
+            jsonObject.getJSONArray("value")
         } catch (e: Exception) {
             Messages.showErrorDialog(project, "Eroare la parsarea JSON-ului: ${e.message}", "JSON Parsing Error")
             return
@@ -73,7 +87,7 @@ class CountCppFunctionsAction : AnAction() {
     private fun sendFileToApi(file: File): String {
         val boundary = "----WebKitFormBoundary7MA4YWxkTrZu0gW"
         val lineEnd = "\r\n"
-        val url = URL("http://172.20.10.2:5000/run_source_file")
+        val url = URL("http://172.20.10.2:5000/upload_source")
 
         val connection = url.openConnection() as HttpURLConnection
         connection.requestMethod = "POST"
@@ -138,7 +152,7 @@ private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclar
 
 
 
-    if (jsonArray.length() != functions.size) return
+    // if (jsonArray.length() != functions.size) return
 
     functions.forEachIndexed { index, func ->
         val jsonObject = jsonArray.getJSONObject(index)
@@ -158,3 +172,4 @@ private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclar
         )
     }
 }
+
