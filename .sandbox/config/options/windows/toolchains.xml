@@ -1,0 +1,8 @@
+<application>
+  <component name="CPPToolchains" version="9">
+    <toolchains detectedVersion="5">
+      <toolchain name="MinGW" toolSetKind="MINGW" toolSetPath="BUNDLED_MINGW" debuggerKind="BUNDLED_GDB" />
+      <toolchain name="Visual Studio" toolSetKind="MSVC" toolSetPath="C:\Program Files\Microsoft Visual Studio\2022\Enterprise" debuggerKind="BUNDLED_LLDB" />
+    </toolchains>
+  </component>
+</application>

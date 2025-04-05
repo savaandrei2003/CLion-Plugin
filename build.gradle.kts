@@ -14,10 +14,22 @@ repositories {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2024.1.7")
-    type.set("IC") // Target IDE Platform
+    version.set("2023.3")
+    type.set("CL") // Target IDE Platform
+    plugins.set(listOf("com.intellij.cidr.base", "com.intellij.cidr.lang"))
+    sandboxDir.set(project.rootDir.resolve(".sandbox").absolutePath)
+}
 
-    plugins.set(listOf(/* Plugin Dependencies */))
+tasks.withType<JavaCompile> {
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
+}
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.jvmTarget = "17"
+}
+
+dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:1.9.25")
 }
 
 tasks {
@@ -31,8 +43,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("241")
-        untilBuild.set("243.*")
+        sinceBuild.set("233")
+        untilBuild.set("233.*")
     }
 
     signPlugin {

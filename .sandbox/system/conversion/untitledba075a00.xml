@@ -1,0 +1,12 @@
+<conversion>
+  <applied-converters>
+    <converter id="DockerRunConfigurationConverterProvider" />
+    <converter id="CidrCompoundRunConfigurationConverterProvider" />
+  </applied-converters>
+  <project-files>
+    <f p="./.idea\misc.xml" t="1743851006" />
+    <f p="./.idea\modules.xml" t="1743851006" />
+    <f p="./.idea\untitled.iml" t="1743851034" />
+    <f p="./.idea\workspace.xml" t="1743854884" />
+  </project-files>
+</conversion>

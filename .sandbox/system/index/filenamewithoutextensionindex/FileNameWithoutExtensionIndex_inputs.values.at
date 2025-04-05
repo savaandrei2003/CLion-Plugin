@@ -1,0 +1,110 @@
+wgdiddstreamdebugapidelayimpdevioctldhcpcsdkdhcpsapidhcpssdkdhtmldiddhtmliiddigitalvdiskguiddispatch	dispexdmksctrldmodshowdmplugindmusbuff	docobjdpfilterdplobby8dpnathlpdsclientdsdriverdskquotadvdevcoddvdmedia	dwritedwrite_1dwrite_2dwrite_3dxgitypedxva2api	dxvahdeappapiseaptypesedevdefsemostoreerrorrepeventsysevntconsevntprovevntraceexchform	exdispexdispidfileextd	filterftsiface	fusionfwptypesh323privhidclasshidusagehostinfohtiframehtmlguidhtmlhelphttpfilthvsocketicftypesidispidsiisext_iiketypesimagehlpimessageindexsrvinitguidintshcutinttypesinvkprxyioapisetipexportiphlpapiipifconsipinfoidiprtrmibipxconstipxrtdefipxtffltiscsidscissper16ktmtypeslmaccesslmapibuflmconfiglmerrloglmremutllmserverlmuseflgloadperflzexpandmadcapclmapicodemapidefsmapiformmapiguidmapihookmapitagsmapiutilmbstringmdcommsgmediaerrmediaobjmedparammergemod	mfplaymimedispmimeinfommiscapimmstreammmsyscommmsystemmprerrormsacmdlgmsdaguidmsdatsrcmsdshapemshtmcidmshtmdidmshtmhst	mshtmlmsimcntlmsimcsdkmsinkautmsiquerymsptrmacmsptrmarmsptrmvcmsputilsmsremotemsstkppg	msxml2	msxml6msxmldidmtsadminmtxadmin	mulresmultimonmultinfonaptypesndattribndhelperndrtypesneteventnetioapinettypesntdd1394ntdd8042ntddbeepntddcdrmntddcdvdntddchgrntdddiskntddmodmntddndisntddpschntddscsintddstorntddtapentddvdeontdsbclintdsbmsgntiologcntsdextsntsecapintsecpkgntstatusobjerror	objidlodbcinst	oleaccolectlidoledbdepoledberr	oledlg	oleidloletx2xa	optarypatchapipatchwizpchannelpolaritypowrprofprnasnotprntfontprofinfopshpack1pshpack2pshpack4pshpack8pshpck16qnetworkraseapifraserrorrasshostrecguidsreconcil	regbagreloggerricheditrkeysvccrobufferroutprotrpcasyncrpcnterrrpcproxy	sapi51	sapi53	sapi54scarddatscarderrscardmgrscardsrvscardsspschannelschedulescrnsavescrptidssecuritysensevtsservprovsetjmpexsetupapishappmgrshdispidshellapisherrorsshfoldershobjidlsimpdataslpublicsmtpguidsphelpersqloledbsqltypessqlucodestdexcptstorduidstorpropstralign	strmifsynchapit2embapitapi3errtaskschdtextservtextstortimeprov	tlbreftlhelp32tmschematransacttriedcidtriediidtsuserextypeinfouastrfnc	unknwn	urlmonusbcamdiusbioctlusbiodefusbprintusbrpmif	vdslun	vidcapvirtdiskvsbackup	vsmgmt	vsprovvsserrorvswriterwbemdispwbemprovwbemtranwebauthnwiavideowincodecwincryptwinddiuiwindot11windowsxwinerrorwininetiwinioctlwinnetwkwinnls32winresrcwinsaferwinscardwinsmcrdwinsock2winspoolwinternlwintrustwinusbio
+winuserwmdrmsdkwmiutilswmsdkidlwmsecurewpapimsg	wpcapiwpceventwpcrsmsgwpftpmsgwppstmsgwpspihlpwpwizmsgws2ipdefws2tcpipwsddiscowsdtypes	wsdxmlwshisotpwsipv6okwsnwlinkwtsapi32	wtypesxcmcmsx2xcmcmsxtxlocinfo	xmldom	xmldsoxmltrnsfxpsprint	activprof
+amvideo	apdevpkey	asyncinfo	bemapiset
+bits1_5
+bits2_0
+bits2_5
+bits3_0
+bits5_0	bthsdpdef	cdosyserr	cdosysstrcommctrl
+control
+d3d10_1	d3d10misc
+d3d11_1
+d3d11_2
+d3d11_3
+d3d11_4	d3d11on12	d3d8types	d3d9types	d3dcommon	d3dx9anim	d3dx9core	d3dx9math	d3dx9mesh
+dbgprop
+dcommon
+devenum
+dinputd
+dxgi1_2
+dxgi1_3
+dxgi1_4
+dxgi1_5
+dxgi1_6	dxgidebug	ehstorapi	fibersapi	fsrmenums	fsrmquota	fwpmtypes	handleapi
+hstring	icodecapi
+ilogobj	ioringapi
+mdbrole	memoryapi
+mfd3d12	mfmp2dlna	mfobjects	minwindef	mmiscapi2	mpeg2bits	mpeg2data
+mscoree	msdaipper	msdrmdefs	msxml2did	msxml6did	mtsevents	napcommon
+netcfgn
+netcfgx	oledbguid	powerbase
+propidl
+propsys
+rtworkq	schemadef	sdkddkver	semaphore
+shldisp
+shtypes
+stdole2	syslimits	tabflicks	tcpestats
+tlogstg
+tpcshrd
+urlhist
+verinfo
+vsadmin
+wbemads
+wbemcli	wcmconfig	wcsplugin	winsdkver	winstring	wlantypes	wmsbuffer
+wsdbase	wsdclient
+wsdhost	wsdxmldom	wsmandisp
+xaudio2	xaudio2fx	xmldomdid	xmldsodid
+xmllite	xpsrassvc
+_bsd_types
+_mingw_mac
+activationactivautactivdbgactivscpamstreamaustreamaxextendbdaiface
+certenrollcomadmin
+combaseapi
+cryptuiapictxtcall
+d2d1helper
+d3dx9shape
+dcomptypesddstream
+devpropdef
+dhcpv6csdkdmodshowdwrite_1dwrite_2dwrite_3
+dxgicommon
+dxgiformatdxgitypedxva2api
+emostore_i
+eventtokenfileopenfindtext
+fsrmscreenfwptypesicftypesiketypes
+inputscope
+ipsectypes
+libcharsetmediaobjmedparam
+minwinbasemmstreammsacmdlgmshtmhstmsinkaut
+msinkaut_i
+msoledbsql
+mtsadmin_i
+mtxadmin_inaptypes
+ndr64types
+netlistmgr
+ntioring_x
+objidlbase
+pgobootrunprnsetup
+processenv
+profileapi
+propkeydefqnetworkreloggerrobuffer
+scardssp_i
+scardssp_p
+sensorsapiservprovshobjidl
+spellcheckswprintf
+sysinfoapitaskschdtextstor
+thumbcache
+tsuserex_i
+unknwnbase
+utilapisetvsbackupvswriterwbemdispwbemprovwbemtran
+wdstptmgmtwincodecwincrypt
+windows.uiwindowsx
+wmcodecdspwmdrmsdk
+wmiatlprovwmsdkidlwmsecurewsddisco
+wtypesbasexpsprintactivdbg100	activprofapisetcconv	asyncinfoaudioclientaudiopolicyclfsmgmtw32compressapicomputecorecomputedefsd2d1effectsd3d10effectd3d10shader	d3d11on12d3d11shaderd3d12shader	d3dcommond3dcompilerd3dx9effect	d3dx9mathd3dx9shaderdatetimeapidirectxmathdownloadmgrdriverspecsdvbsiparser	dxgidebugfltwinerror	fsrmenums	fsrmquotafsrmreports	icodecapiinspectablejoystickapilocationapi	mfobjectsmfreadwritemftransformminappmodelmmdeviceapi	napcommonnapprotocolobjectarraypropvarutilrdpencomapispecstringstimezoneapiuianimationvsanimationwincodecsdkwmcontainerwmpservices	wmsbufferwow64apiset	wsdclient	wsmandisp	xaudio2fx	xpsrassvc_mingw_off_t
+activationcluscfgguidsd2d1_1helperd2dbasetypesdrmexternals
+dxgicommon
+dxgiformateaphosterror
+eventtokenfsrmpipeline
+fsrmscreen
+inputscopeknownfolderslibloaderapilocalcharsetmailmsgpropsmpeg2structsnamedpipeapinamespaceapi
+netlistmgr
+objidlbase
+oleacc.dllplaysoundapipowersettingpthread_time
+sensorsapishdeprecated
+spellcheckstringapiset
+thumbcacheuiautomation
+unknwnbasewdsclientapi
+wdstptmgmtwinapifamily
+windows.uiwlanihvtypes
+wmcodecdsp
+wtypesbase_mingw_secapi_mingw_stat64_mingw_stdargactivdbg100audioapotypesaudioclientaudiopolicyaxextendenumsbluetoothapiscluscfgservercluscfgwizardd3d10_1shaderd3d12shaderdbgautoattachdownloadmgrfsrmreportshttprequestididentitystoreinspectablelibloaderapi2locationapimagnificationmanipulationsmfreadwritemftransformmmdeviceapinapmanagementnapprotocolobjectarrayrdpencomapiuianimationwincodecsdkwindows.mediawinhvplatformwmcontainerwmprealestatewmpserviceswsdattachment_mingw_unicodeaudioendpointsbdaiface_enumscommoncontrolscomputenetworkcomputestorageconcurrencysald3d10sdklayersd3d11sdklayersd3d12sdklayersdcompanimationdevicetopologydocumenttargetdrmexternalseapmethodtypesendpointvolumeerrhandlingapii_cryptasn1tlsidentitycommoninterlockedapimfmediacapturempeg2psiparserpthread_compatpthread_signalpthread_unistdrealtimeapisetrestartmanagersrrestoreptapiversionhelperswindows.systemwinhvemulationxpsobjectmodel_mingw_dxhelpercorecrt_startupcorecrt_wstdlibdispatcherqueuemfcaptureenginemsctfmonitorapinapmanagementsecuritybaseapishellscalingapiwindows.mediawindows.storagewindows.ui.corewindowsnumericswmprealestatewsdattachmentaudioendpointscommoncontrolsd2d1effectauthord3d10sdklayersd3d11sdklayersd3d12sdklayersdcompanimationdelayloadhandlerdevicetopologydocobjectservicedocumenttargeteaphostpeertypesendpointvolumemfmediacapturethreadpoolapisetuiautomationcorewindows.systemwindowscontractsxpsobjectmodelxpsobjectmodel_1adoint_backcompataudiosessiontypesd2d1effecthelperseapmethodpeerapisexpandedresourcesfltuserstructuresmfcaptureengineprocessthreadsapisystemtopologyapitsvirtualchannelswindows.gaming.uiwindows.storagewindows.ui.corewinhvplatformdefscredentialproviderdirectmanipulationdocobjectserviceprocesstopologyapispatialaudioclientuiautomationclientuiautomationcorewindows.foundationwindowscontractsxpsobjectmodel_1adogpool_backcompataudioengineendpointnapcertrelyingpartynapservermanagementportabledevicetypestsvirtualchannelsuiautomationcoreapiwindows.gaming.uiwinsatcominterfaceixpsdigitalsignaturecorecrt_stdio_configcredentialproviderdirectmanipulationfunctiondiscoveryapinapenforcementclientnapsystemhealthagentsecurityappcontainerspatialaudioclientspatialaudiometadatauiautomationclientwindows.foundationwindows.gaming.inputwindows.system.powerwindowsnumerics.impleapauthenticatortypeseaphostpeerconfigapisfunctiondiscoverykeysnapcertrelyingpartynapmicrosoftvendoridsnapservermanagementportabledevicetypesuiviewsettingsinteropwindows.devices.powerwindows.globalizationwindows.media.devicesxpsdigitalsignaturenapenforcementclientnapsystemhealthagentthreadpoollegacyapisetwindows.gaming.inputwindows.system.powerwindows.ui.compositionivectorchangedeventargsuiviewsettingsinteropwindows.devices.hapticswindows.devices.powerwindows.globalizationwindows.media.deviceswindows.storage.streamsnapsystemhealthvalidatorportabledeviceconnectapistructuredqueryconditionwindows.graphics.capturewindows.graphics.directxwindows.graphics.effectswindows.system.threadingwindows.ui.compositionivectorchangedeventargswindows.devices.hapticswindows.storage.streamswindows.ui.viewmanagementeapmethodauthenticatorapisnapsystemhealthvalidatorstructuredqueryconditionwindows.graphics.capturewindows.graphics.directxwindows.graphics.effectswindows.perception.spatialwindows.system.threadingwindows.system.userprofilefunctiondiscoverycategoriesproofofpossessioncookieinfowindows.devices.enumerationwindows.foundation.metadatawindows.foundation.numericswindows.gaming.input.customwindows.ui.viewmanagementeapauthenticatoractiondefinefunctiondiscoveryconstraintswindows.graphics.holographicwindows.perception.spatialwindows.security.credentialswindows.system.userprofile functiondiscoverykeys_devpkey functiondiscoverynotification physicalmonitorenumerationapiproofofpossessioncookieinfowindows.devices.enumerationwindows.foundation.metadatawindows.foundation.numericswindows.gaming.input.custom windows.media.speechsynthesis windows.security.cryptography!windows.foundation.collectionswindows.graphics.holographic!windows.media.closedcaptioningwindows.security.credentials!windows.ui.composition.interop"lowlevelmonitorconfigurationapi"windows.media.speechrecognition windows.media.speechsynthesis windows.security.cryptography# highlevelmonitorconfigurationapi!windows.foundation.collections!windows.media.closedcaptioning!windows.ui.composition.interop"windows.media.speechrecognition%"windows.gaming.input.forcefeedback&#systemmediatransportcontrolsinterop&#windows.graphics.directx.direct3d11&#windows.perception.spatial.surfaces%"windows.gaming.input.forcefeedback&#systemmediatransportcontrolsinterop&#windows.graphics.directx.direct3d11&#windows.perception.spatial.surfaces-*windows.system.profile.systemmanufacturers-*windows.system.profile.systemmanufacturersmainmain
