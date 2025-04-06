@@ -5,6 +5,8 @@ import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.editor.EditorCustomElementRenderer
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBFont
@@ -17,6 +19,7 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.swing.SwingUtilities
+import com.intellij.openapi.progress.Task
 
 class ExecutionTimeRenderer(
     private val text: String,
@@ -105,13 +108,21 @@ class ExecutionTimeRenderer(
                     val isInYRange = clickedY in inlayStartY..(inlayStartY + inlayHeight)
 
                     if (isInXRange && isInYRange) {
-                        val response = fetchFunctionBodyFromServer()
-                        if (response != null) {
-                            val (message, advice) = response
-                            showExecutionDetailsToolWindow(project, message, advice)
-                        } else {
-                            showExecutionDetailsToolWindow(project, "Eroare la preluarea detaliilor.", "")
-                        }
+                        ProgressManager.getInstance().run(object : Task.Modal(project, "Se încarcă detaliile funcției...", true) {
+                            override fun run(indicator: ProgressIndicator) {
+                                indicator.text = "Se așteaptă răspunsul serverului..."
+                                val response = fetchFunctionBodyFromServer()
+
+                                SwingUtilities.invokeLater {
+                                    if (response != null) {
+                                        val (message, advice) = response
+                                        showExecutionDetailsToolWindow(project, message, advice)
+                                    } else {
+                                        showExecutionDetailsToolWindow(project, "Eroare la preluarea detaliilor.", "")
+                                    }
+                                }
+                            }
+                        })
                     }
                 }
             }
