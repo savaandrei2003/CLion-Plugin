@@ -1,6 +1,6 @@
 package com.example.clionplugin
 
-import ExecutionTimeRenderer
+
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
