@@ -37,19 +37,16 @@ fun showExecutionDetailsToolWindow(project: Project, message: String, recomendat
 
     val htmlContent = """
     <html>
-        <body style="font-family: Consolas; font-size: 12px; color: #2b2b2b;">
-            <div>
-                <b>Funcția analizată:</b><br/>
-                <div style="background-color:#f5f5f5; padding:8px; border-radius:5px; border:1px solid #ddd; white-space:pre-wrap; font-family:Consolas;">
-                    ${escapeHtml(cleanedMessage)}
+        <body style="font-family: 'Segoe UI', sans-serif; font-size: 13px; color: #2b2b2b; background-color: #f4f4f4; padding: 16px;">
+            <div style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 16px;">
+                <h2 style="margin-top: 0; text-align: center; color: #3c3f41;">📊 Funcția analizată</h2>
+                <pre style="background-color:#2b2b2b; color: #f1f1f1; padding:12px; border-radius:6px; overflow-x:auto; font-family: Consolas, monospace; font-size: 13px;">
+${escapeHtml(cleanedMessage)}
+                </pre>
+                <h3 style="color: #3c3f41;">💡 Recomandări de optimizare</h3>
+                <div style="background-color: #eef5ff; border-left: 4px solid #3c78d8; padding: 10px; border-radius: 6px; font-size: 13px;">
+                    ${escapeHtml(recomendation)}
                 </div>
-            </div>
-            <br/>
-            <div>
-                <b>Recomandări de optimizare:</b>
-                <br/>
-                ${escapeHtml(recomendation)}
-                <br/>
             </div>
         </body>
     </html>
