@@ -73,15 +73,17 @@ class CountCppFunctionsAction : AnAction() {
         functions: Collection<OCFunctionDeclaration>,
         project: Project
     ) {
-        val jsonArray = try {
-            val jsonObject = JSONObject(response)
-            jsonObject.getJSONArray("value")
+        val jsonObject = try {
+            JSONObject(response)
         } catch (e: Exception) {
             Messages.showErrorDialog(project, "Eroare la parsarea JSON-ului: ${e.message}", "JSON Parsing Error")
             return
         }
 
-        addInlayHints(editor, functions, jsonArray, project)
+        val jsonArray = jsonObject.getJSONArray("value")
+        val functionOrder = jsonObject.getJSONArray("function_order")
+
+        addInlayHints(editor, functions, jsonArray, functionOrder, project)
     }
 
     private fun sendFileToApi(file: File): String {
@@ -144,14 +146,22 @@ private fun addPerformanceMarkers(project: Project, psiFile: PsiFile, functions:
     }
 }
 
-private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclaration>, jsonArray: JSONArray, project: Project) {
-    val inlayModel = editor.inlayModel
+private fun addInlayHints(
+    editor: Editor,
+    functions: Collection<OCFunctionDeclaration>,
+    jsonArray: JSONArray,
+    functionOrder: JSONArray,
+    project: Project
+) {
     val document = editor.document
+    val inlayModel = editor.inlayModel
+    val functionMap = functions.associateBy { it.name }
 
-    functions.forEachIndexed { index, func ->
-        if (index >= jsonArray.length()) return@forEachIndexed
+    for (i in 0 until functionOrder.length()) {
+        val funcName = functionOrder.getString(i)
+        val funcDecl = functionMap[funcName] ?: continue
+        val jsonObject = jsonArray.findObjectWithFunction(funcName) ?: continue
 
-        val jsonObject = jsonArray.getJSONObject(index)
         val cpuTime = jsonObject.optString("cpu_time", "N/A")
         val register = jsonObject.optString("start_address", "N/A")
         val hintExtra = if (jsonObject.has("hint") && !jsonObject.isNull("hint")) {
@@ -159,10 +169,8 @@ private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclar
             if (hintValue.isNotBlank()) " | Hint: $hintValue" else ""
         } else ""
 
-        val hintText = "⏱ Functia ${index + 1}: CPU Time: $cpuTime | Register: $register$hintExtra"
-
-        val line = document.getLineNumber(func.textOffset)
-        val offset = document.getLineStartOffset(line)
+        val hintText = "⏱ Functia ${i + 1}: CPU Time: $cpuTime | Register: $register$hintExtra"
+        val offset = document.getLineStartOffset(document.getLineNumber(funcDecl.textOffset))
 
         inlayModel.getBlockElementsInRange(offset, offset + 1).forEach { inlay ->
             if (inlay.renderer is ExecutionTimeRenderer) {
@@ -170,7 +178,6 @@ private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclar
             }
         }
 
-        // Adaugă unul nou
         inlayModel.addBlockElement(
             offset,
             true,
@@ -179,4 +186,12 @@ private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclar
             ExecutionTimeRenderer(hintText, project)
         )
     }
+}
+
+private fun JSONArray.findObjectWithFunction(functionName: String): JSONObject? {
+    for (i in 0 until length()) {
+        val obj = getJSONObject(i)
+        if (obj.getString("function") == functionName) return obj
+    }
+    return null
 }
