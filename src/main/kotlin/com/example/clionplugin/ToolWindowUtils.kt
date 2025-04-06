@@ -1,12 +1,19 @@
 package com.example.clionplugin
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.psi.PsiManager
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.intellij.ui.content.ContentFactory
+import com.jetbrains.cidr.lang.psi.OCFunctionDeclaration
 import org.json.JSONObject
 import java.awt.BorderLayout
 import java.awt.Color
@@ -63,11 +70,12 @@ ${escapeHtml(cleanedMessage)}
     val scrollPane = JBScrollPane(textPane)
     scrollPane.border = JBUI.Borders.empty()
     panel.add(scrollPane, BorderLayout.CENTER)
+    val fullHtmlMessage = fetchFullSolutionHtml()
 
     val button = JButton("View entire solution")
     button.addActionListener {
         ApplicationManager.getApplication().executeOnPooledThread {
-            val fullHtmlMessage = fetchFullSolutionHtml()
+
             SwingUtilities.invokeLater {
                 if (fullHtmlMessage != null) {
                     val cleanedFull = fullHtmlMessage.removePrefix("```cpp\n").removeSuffix("\n```")
@@ -104,10 +112,42 @@ ${escapeHtml(cleanedMessage)}
         }
     }
 
+    val replaceButton = JButton("Integrate in file")
+    replaceButton.addActionListener {
+        ApplicationManager.getApplication().executeOnPooledThread {
+//            val fullHtmlMessage = fetchFullSolutionHtml()
+            if (fullHtmlMessage != null) {
+
+                val cleanedNewCode = fullHtmlMessage.removePrefix("```cpp\n").removeSuffix("\n```")
+
+                ApplicationManager.getApplication().invokeLater {
+                    val editor = EditorFactory.getInstance().allEditors.firstOrNull() ?: return@invokeLater
+                    val virtualFile = FileDocumentManager.getInstance().getFile(editor.document) ?: return@invokeLater
+                    val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return@invokeLater
+                    val functions = PsiTreeUtil.findChildrenOfType(psiFile, OCFunctionDeclaration::class.java)
+
+                    val originalFunction = functions.firstOrNull { it.text.contains(cleanedMessage.trim()) } ?: return@invokeLater
+
+                    WriteCommandAction.runWriteCommandAction(project) {
+                        val document = editor.document
+                        val startOffset = originalFunction.textOffset
+                        val endOffset = startOffset + originalFunction.textLength
+                        document.replaceString(startOffset, endOffset, cleanedNewCode)
+                        VirtualFileManager.getInstance().syncRefresh()
+                    }
+
+                    JOptionPane.showMessageDialog(null, "Funcția a fost înlocuită cu succes!", "Integrat", JOptionPane.INFORMATION_MESSAGE)
+                }
+            }
+        }
+    }
+
     val buttonPanel = JPanel().apply {
-        layout = BorderLayout()
+        layout = BoxLayout(this, BoxLayout.Y_AXIS)
         border = JBUI.Borders.emptyTop(8)
-        add(button, BorderLayout.CENTER)
+        add(button)
+        add(Box.createVerticalStrut(8))
+        add(replaceButton)
     }
 
     panel.add(buttonPanel, BorderLayout.SOUTH)
