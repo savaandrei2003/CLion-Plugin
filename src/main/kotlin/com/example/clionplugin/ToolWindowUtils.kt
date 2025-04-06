@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.suggested.endOffset
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
@@ -45,6 +46,7 @@ fun showExecutionDetailsToolWindow(project: Project, message: String, recomendat
     textPane.border = JBUI.Borders.empty()
 
     val cleanedMessage = message.removePrefix("```cpp\n").removeSuffix("\n```")
+    val cleanedMessage2 = message.removePrefix("```\n").removeSuffix("\n```")
 
     var htmlBuilder = StringBuilder()
     htmlBuilder.append("""
@@ -126,12 +128,21 @@ ${escapeHtml(cleanedMessage)}
                     val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return@invokeLater
                     val functions = PsiTreeUtil.findChildrenOfType(psiFile, OCFunctionDeclaration::class.java)
 
-                    val originalFunction = functions.firstOrNull { it.text.contains(cleanedMessage.trim()) } ?: return@invokeLater
-
+                    //val originalFunction = functions.firstOrNull { it.text.contains(cleanedMessage.trim()) } ?: return@invokeLater
+                    val functionName = Regex("""\b\w+\s+(\w+)\s*\(""")
+                        .find(cleanedMessage2)
+                        ?.groupValues
+                        ?.get(1)
+                        ?: return@invokeLater
+                    val originalFunction = functions.firstOrNull { it.text.contains(functionName) }
+                        ?: run {
+                            JOptionPane.showMessageDialog(null, "Funcția originală nu a fost găsită.", "Eroare", JOptionPane.ERROR_MESSAGE)
+                            return@invokeLater
+                        }
                     WriteCommandAction.runWriteCommandAction(project) {
                         val document = editor.document
-                        val startOffset = originalFunction.textOffset
-                        val endOffset = startOffset + originalFunction.textLength
+                        val startOffset = document.getLineStartOffset(document.getLineNumber(originalFunction.textOffset))
+                        val endOffset = originalFunction.textRange.endOffset
                         document.replaceString(startOffset, endOffset, cleanedNewCode)
                         VirtualFileManager.getInstance().syncRefresh()
                     }

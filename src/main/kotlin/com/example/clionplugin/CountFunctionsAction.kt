@@ -82,8 +82,9 @@ class CountCppFunctionsAction : AnAction() {
 
         val jsonArray = jsonObject.getJSONArray("value")
         val functionOrder = jsonObject.getJSONArray("function_order")
+        val lastRan = if (jsonObject.has("last_ran")) jsonObject.getJSONArray("last_ran") else null
 
-        addInlayHints(editor, functions, jsonArray, functionOrder, project)
+        addInlayHints(editor, functions, jsonArray, functionOrder, lastRan, project)
     }
 
     private fun sendFileToApi(file: File): String {
@@ -151,6 +152,7 @@ private fun addInlayHints(
     functions: Collection<OCFunctionDeclaration>,
     jsonArray: JSONArray,
     functionOrder: JSONArray,
+    lastRan: JSONArray?,
     project: Project
 ) {
     val document = editor.document
@@ -162,14 +164,26 @@ private fun addInlayHints(
         val funcDecl = functionMap[funcName] ?: continue
         val jsonObject = jsonArray.findObjectWithFunction(funcName) ?: continue
 
-        val cpuTime = jsonObject.optString("cpu_time", "N/A")
+        val cpuTimeStr = jsonObject.optString("cpu_time", "N/A")
+        val cpuTime = cpuTimeStr.removeSuffix("s").toDoubleOrNull() ?: -1.0
         val register = jsonObject.optString("start_address", "N/A")
-        val hintExtra = if (jsonObject.has("hint") && !jsonObject.isNull("hint")) {
-            val hintValue = jsonObject.getString("hint")
-            if (hintValue.isNotBlank()) " | Hint: $hintValue" else ""
-        } else ""
+        val hint = jsonObject.optString("hint", "")
 
-        val hintText = "⏱ Functia ${i + 1}: CPU Time: $cpuTime | Register: $register$hintExtra"
+        var hintExtra = if (hint.isNotBlank()) " | Hint: $hint" else ""
+
+        // Compară cu ultima rulare dacă există
+        if (lastRan != null) {
+            val lastCpuTime = lastRan.findObjectWithFunction(funcName)?.optString("cpu_time", null)
+            val lastTime = lastCpuTime?.removeSuffix("s")?.toDoubleOrNull()
+            if (lastTime != null && cpuTime > lastTime) {
+                hintExtra += " | Slower than last run (${String.format("%.3f", lastTime)}s)"
+            } else if (lastTime != null && cpuTime < lastTime) {
+                hintExtra += " | Faster than last run (${String.format("%.3f", lastTime)}s)"
+            }
+
+        }
+
+        val hintText = "⏱ Functia ${i + 1}: CPU Time: $cpuTimeStr | Register: $register$hintExtra"
         val offset = document.getLineStartOffset(document.getLineNumber(funcDecl.textOffset))
 
         inlayModel.getBlockElementsInRange(offset, offset + 1).forEach { inlay ->

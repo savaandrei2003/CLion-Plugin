@@ -84,9 +84,13 @@ class ExecutionTimeRenderer(
                 val point = e.point
                 val visualPos = editor.xyToVisualPosition(point)
                 val clickedX = editor.visualPositionToXY(visualPos).x
-                val inlayStartX = editor.visualPositionToXY(editor.offsetToVisualPosition(inlay.offset)).x
+                val clickedY = point.y
 
-                val fontMetrics = editor.contentComponent.getFontMetrics(JBFont.create(Font("Consolas", Font.ITALIC, 12)))
+                val inlayStartX = editor.visualPositionToXY(editor.offsetToVisualPosition(inlay.offset)).x
+                val inlayStartY = inlay.bounds?.y ?: 0
+                val inlayHeight = inlay.bounds?.height ?: 16
+
+                val fontMetrics = component.getFontMetrics(JBFont.create(Font("Consolas", Font.ITALIC, 12)))
                 val fullWidth = fontMetrics.stringWidth(text)
 
                 val hintIndex = text.indexOf("Hint:")
@@ -97,7 +101,10 @@ class ExecutionTimeRenderer(
                     val hintStartX = inlayStartX + hintStartOffset
                     val hintEndX = inlayStartX + hintEndOffset
 
-                    if (clickedX in hintStartX..hintEndX) {
+                    val isInXRange = clickedX in hintStartX..hintEndX
+                    val isInYRange = clickedY in inlayStartY..(inlayStartY + inlayHeight)
+
+                    if (isInXRange && isInYRange) {
                         val response = fetchFunctionBodyFromServer()
                         if (response != null) {
                             val (message, advice) = response
