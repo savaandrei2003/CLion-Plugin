@@ -99,14 +99,19 @@ class ExecutionTimeRenderer(
 
                     if (clickedX in hintStartX..hintEndX) {
                         val response = fetchFunctionBodyFromServer()
-                        showExecutionDetailsToolWindow(project, response?: "Eroare la preluarea detaliilor.")
+                        if (response != null) {
+                            val (message, advice) = response
+                            showExecutionDetailsToolWindow(project, message, advice)
+                        } else {
+                            showExecutionDetailsToolWindow(project, "Eroare la preluarea detaliilor.", "")
+                        }
                     }
                 }
             }
         })
     }
 
-    private fun fetchFunctionBodyFromServer(): String? {
+    private fun fetchFunctionBodyFromServer(): Pair<String, String>? {
         return try {
             val url = URL("http://172.20.10.2:5000/function_body")
             val connection = url.openConnection() as HttpURLConnection
@@ -117,7 +122,9 @@ class ExecutionTimeRenderer(
             }
 
             val json = JSONObject(responseText)
-            json.getString("message")
+            val message = json.getString("message")
+            val advice = json.optString("advice", "Nicio recomandare oferită.")
+            message to advice
         } catch (e: Exception) {
             null
         }

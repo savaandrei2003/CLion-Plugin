@@ -10,7 +10,7 @@ import com.intellij.ui.content.ContentFactory
 import javax.swing.*
 import java.awt.*
 
-fun showExecutionDetailsToolWindow(project: Project, message: String) {
+fun showExecutionDetailsToolWindow(project: Project, message: String, recomendation: String) {
     val toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Execution Details") ?: return
     toolWindow.show()
 
@@ -47,11 +47,9 @@ fun showExecutionDetailsToolWindow(project: Project, message: String) {
             <br/>
             <div>
                 <b>Recomandări de optimizare:</b>
-                <ul>
-                    <li>Evitați buclele imbricate inutile</li>
-                    <li>Folosiți referințe pentru parametrii mari</li>
-                    <li>Analizați dacă puteți reduce apelurile recurente</li>
-                </ul>
+                <br/>
+                ${escapeHtml(recomendation)}
+                <br/>
             </div>
         </body>
     </html>
