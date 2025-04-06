@@ -164,11 +164,18 @@ private fun addInlayHints(editor: Editor, functions: Collection<OCFunctionDeclar
         val line = document.getLineNumber(func.textOffset)
         val offset = document.getLineStartOffset(line)
 
+        inlayModel.getBlockElementsInRange(offset, offset + 1).forEach { inlay ->
+            if (inlay.renderer is ExecutionTimeRenderer) {
+                inlay.dispose()
+            }
+        }
+
+        // Adaugă unul nou
         inlayModel.addBlockElement(
             offset,
-            true,  // relatesToPrecedingText
-            true,  // showAbove
-            0,     // priority
+            true,
+            true,
+            0,
             ExecutionTimeRenderer(hintText, project)
         )
     }
